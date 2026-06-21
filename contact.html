@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>যোগাযোগ · নিটিং টুলস</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0a0d13" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand"><span class="brand-ico">⊞</span> নিটিং টুলস</a>
+      <button class="menu-btn" id="menuBtn" aria-label="মেনু">☰</button>
+    </div>
+  </header>
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <nav class="drawer" id="drawer">
+    <div class="drawer-head">
+      <span>মেনু</span>
+      <button class="drawer-close" id="drawerClose">✕</button>
+    </div>
+    <a href="index.html">🧮 ফরমুলা হ্যান্ডবুক</a>
+    <a href="https://mohiuddinramzan2.github.io/Knitting-production-calculator/" target="_blank" rel="noopener">🎯 প্রোডাকশন কাউন্টার ক্যালকুলেটর</a>
+    <a href="https://drive.google.com/file/d/1JRvIPtFfzKpyK74nl-0Q86v-pFJWSpz8/view?usp=drivesdk" target="_blank" rel="noopener">📦 কাউন্টার ক্যালকুলেটর APK ডাউনলোড</a>
+    <div class="sep"></div>
+    <a href="contact.html" class="current">✉️ যোগাযোগ</a>
+    <div class="small-note">APK লিংক Google Drive-এ হোস্ট করা — ডাউনলোডের সময় "Unknown source" পারমিশন লাগতে পারে।</div>
+  </nav>
+
+  <header>
+    <div class="eyebrow"><span class="dot"></span> CIRCULAR&nbsp;KNITTING&nbsp;·&nbsp;CONTACT</div>
+    <h1>যোগাযোগ করুন</h1>
+    <p>প্রশ্ন,&nbsp;সাজেশন&nbsp;বা&nbsp;কাজের&nbsp;জন্য&nbsp;নিচের&nbsp;যেকোনো&nbsp;মাধ্যমে&nbsp;যোগাযোগ&nbsp;করুন</p>
+  </header>
+
+  <a href="tel:+8801950802903" class="contact-card" style="text-decoration:none;">
+    <div class="c-ico">📞</div>
+    <div class="c-body">
+      <div class="c-label">ফোন কল</div>
+      <div class="c-value">+880 1950-802903</div>
+    </div>
+    <span class="c-go">→</span>
+  </a>
+
+  <a href="https://wa.link/107anm" target="_blank" rel="noopener" class="contact-card whatsapp" style="text-decoration:none;">
+    <div class="c-ico">💬</div>
+    <div class="c-body">
+      <div class="c-label">WhatsApp</div>
+      <div class="c-value">চ্যাট করুন</div>
+    </div>
+    <span class="c-go">→</span>
+  </a>
+
+  <a href="https://m.me/mohiuddinramzan2222" target="_blank" rel="noopener" class="contact-card messenger" style="text-decoration:none;">
+    <div class="c-ico">💌</div>
+    <div class="c-body">
+      <div class="c-label">Messenger</div>
+      <div class="c-value">mohiuddinramzan2222</div>
+    </div>
+    <span class="c-go">→</span>
+  </a>
+
+  <footer>
+    সাড়া দিতে কিছুটা সময় লাগতে পারে — দয়া করে অপেক্ষা করুন।
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const menuBtn = document.getElementById('menuBtn');
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('drawerOverlay');
+  const drawerClose = document.getElementById('drawerClose');
+
+  function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('open'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('open'); }
+
+  menuBtn.addEventListener('click', openDrawer);
+  drawerClose.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeDrawer(); });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+})();
+</script>
+</body>
+</html>

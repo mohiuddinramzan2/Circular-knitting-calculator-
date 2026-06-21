@@ -1,0 +1,17 @@
+{
+  "name": "নিটিং ফরমুলা হ্যান্ডবুক",
+  "short_name": "ফরমুলা হ্যান্ডবুক",
+  "description": "সার্কুলার নিটিং-এর ৩২টি গুরুত্বপূর্ণ সূত্রের ক্যালকুলেটর সংকলন (GSM, Stitch Length, Yarn Count, Production, CPI/WPI ইত্যাদি)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0d13",
+  "theme_color": "#0a0d13",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
