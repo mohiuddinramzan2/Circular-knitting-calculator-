@@ -26,7 +26,6 @@
       <button class="drawer-close" id="drawerClose">✕</button>
     </div>
     <a href="index.html" class="current">🧮 ফরমুলা হ্যান্ডবুক</a>
-    <a href="https://mohiuddinramzan2.github.io/Knitting-production-calculator/" target="_blank" rel="noopener">🎯 প্রোডাকশন কাউন্টার ক্যালকুলেটর</a>
     <a href="https://drive.google.com/file/d/1JRvIPtFfzKpyK74nl-0Q86v-pFJWSpz8/view?usp=drivesdk" target="_blank" rel="noopener">📦 কাউন্টার ক্যালকুলেটর APK ডাউনলোড</a>
     <div class="sep"></div>
     <a href="contact.html">✉️ যোগাযোগ</a>
@@ -182,6 +181,296 @@
       formula:'উইডথ = (টিউব ডায়ামিটার × π) ÷ 2',
       inputs:[ {id:'d', label:'টিউব ডায়ামিটার', unit:'inch', def:30} ],
       calc:(v)=>({ value:(v.d*Math.PI)/2, unit:'inch' }) },
+
+    { id:'tubeDiameter', cat:'machine', name:'Tube Diameter (টিউব ডায়ামিটার)',
+      formula:'ডায়ামিটার = পরিধি ÷ π',
+      inputs:[ {id:'c', label:'পরিধি (Circumference)', unit:'inch', def:94.2} ],
+      calc:(v)=>({ value:v.c/Math.PI, unit:'inch' }) },
+
+    { id:'machineGauge', cat:'machine', name:'Machine Gauge (মেশিন গেজ)',
+      formula:'গেজ = নিডেল সংখ্যা ÷ সিলিন্ডার ডায়ামিটার(inch)',
+      inputs:[
+        {id:'n', label:'নিডেল সংখ্যা', unit:'টি', def:2260},
+        {id:'d', label:'সিলিন্ডার ডায়ামিটার', unit:'inch', def:30},
+      ],
+      calc:(v)=>({ value:v.n/v.d, unit:'GG' }) },
+
+    { id:'totalNeedles', cat:'machine', name:'Total Needles (মোট নিডেল)',
+      formula:'নিডেল = গেজ × ডায়ামিটার(inch)',
+      inputs:[
+        {id:'g', label:'গেজ', unit:'GG', def:24},
+        {id:'d', label:'ডায়ামিটার', unit:'inch', def:30},
+      ],
+      calc:(v)=>({ value:v.g*v.d, unit:'নিডেল' }) },
+
+    { id:'production', cat:'production', name:'Production (kg/hr) — বিস্তারিত',
+      formula:'Prod = (π × D × RPM × ফিডার × SL × Eff × 60) ÷ ইয়ার্ন কনস্ট্যান্ট',
+      inputs:[
+        {id:'d', label:'ডায়ামিটার', unit:'inch', def:30},
+        {id:'rpm', label:'RPM', unit:'rev/min', def:20},
+        {id:'f', label:'ফিডার সংখ্যা', unit:'টি', def:90},
+        {id:'sl', label:'স্টিচ লেন্থ', unit:'mm', def:30},
+        {id:'eff', label:'এফিসিয়েন্সি', unit:'%', def:85},
+        {id:'k', label:'ইয়ার্ন কনস্ট্যান্ট', unit:'মিল-নির্ধারিত', def:1000000},
+      ],
+      calc:(v)=>{ const eff=v.eff/100; const p=(Math.PI*v.d*v.rpm*v.f*v.sl*eff*60)/v.k; return {value:p, unit:'kg/hr'}; },
+      hint:'ইয়ার্ন কনস্ট্যান্ট সুতার ধরন ও কাউন্ট অনুযায়ী মিল-ভিত্তিক ভিন্ন হয় — নিজের মিলের স্ট্যান্ডার্ড মান বসান।' },
+
+    { id:'machineEfficiency', cat:'production', name:'Machine Efficiency (মেশিন এফিসিয়েন্সি)',
+      formula:'এফিসিয়েন্সি % = (Actual ÷ Target) × 100',
+      inputs:[
+        {id:'a', label:'Actual Production', unit:'kg/hr', def:42},
+        {id:'t', label:'Target Production', unit:'kg/hr', def:50},
+      ],
+      calc:(v)=>({ value:(v.a/v.t)*100, unit:'%' }) },
+
+    { id:'takeupSpeed', cat:'production', name:'Take-up Speed',
+      formula:'Take-up = ফেব্রিক লেন্থ ÷ সময়',
+      inputs:[
+        {id:'l', label:'ফেব্রিক লেন্থ', unit:'মিটার', def:60},
+        {id:'t', label:'সময়', unit:'মিনিট', def:1},
+      ],
+      calc:(v)=>({ value:v.l/v.t, unit:'মিটার/মিনিট' }) },
+
+    { id:'yarnDeliverySpeed', cat:'production', name:'Yarn Delivery Speed',
+      formula:'ডেলিভারি স্পিড = RPM × ফিডার × স্টিচ লেন্থ',
+      inputs:[
+        {id:'rpm', label:'RPM', unit:'rev/min', def:20},
+        {id:'f', label:'ফিডার সংখ্যা', unit:'টি', def:90},
+        {id:'sl', label:'স্টিচ লেন্থ', unit:'mm', def:30},
+      ],
+      calc:(v)=>({ value:v.rpm*v.f*v.sl, unit:'mm/min' }) },
+
+    { id:'machineRpm', cat:'production', name:'Machine RPM (রিভার্স ক্যালকুলেশন)',
+      formula:'RPM = (Production × Ne) ÷ (Constant × ফিডার × SL)',
+      inputs:[
+        {id:'p', label:'Production', unit:'kg/hr', def:42},
+        {id:'ne', label:'Ne (ইয়ার্ন কাউন্ট)', unit:'Ne', def:30},
+        {id:'k', label:'Constant', unit:'মিল-নির্ধারিত', def:1000},
+        {id:'f', label:'ফিডার সংখ্যা', unit:'টি', def:90},
+        {id:'sl', label:'স্টিচ লেন্থ', unit:'mm', def:30},
+      ],
+      calc:(v)=>({ value:(v.p*v.ne)/(v.k*v.f*v.sl), unit:'RPM' }) },
+
+    { id:'fabricLengthProduced', cat:'production', name:'Fabric Length Produced',
+      formula:'লেন্থ = Take-up Speed × সময়',
+      inputs:[
+        {id:'s', label:'Take-up Speed', unit:'মিটার/মিনিট', def:60},
+        {id:'t', label:'সময়', unit:'মিনিট', def:60},
+      ],
+      calc:(v)=>({ value:v.s*v.t, unit:'মিটার' }) },
+
+    { id:'surfaceSpeed', cat:'production', name:'Machine Surface Speed',
+      formula:'সারফেস স্পিড = π × D × RPM',
+      inputs:[
+        {id:'d', label:'ডায়ামিটার', unit:'inch', def:30},
+        {id:'rpm', label:'RPM', unit:'rev/min', def:20},
+      ],
+      calc:(v)=>({ value:Math.PI*v.d*v.rpm, unit:'inch/min' }) },
+
+    { id:'cpi', cat:'quality', name:'CPI (Courses Per Inch)',
+      formula:'CPI = ১ ইঞ্চিতে কোর্সের সংখ্যা',
+      inputs:[ {id:'c', label:'১ ইঞ্চিতে কোর্স সংখ্যা', unit:'টি', def:48} ],
+      calc:(v)=>({ value:v.c, unit:'CPI' }) },
+
+    { id:'wpi', cat:'quality', name:'WPI (Wales Per Inch)',
+      formula:'WPI = ১ ইঞ্চিতে ওয়েলসের সংখ্যা',
+      inputs:[ {id:'w', label:'১ ইঞ্চিতে ওয়েলস সংখ্যা', unit:'টি', def:36} ],
+      calc:(v)=>({ value:v.w, unit:'WPI' }) },
+
+    { id:'stitchDensity', cat:'quality', name:'Stitch Density (স্টিচ ডেনসিটি)',
+      formula:'ডেনসিটি = CPI × WPI',
+      inputs:[
+        {id:'cpi', label:'CPI', unit:'', def:48},
+        {id:'wpi', label:'WPI', unit:'', def:36},
+      ],
+      calc:(v)=>({ value:v.cpi*v.wpi, unit:'স্টিচ/ইঞ্চি²' }) },
+
+    { id:'coverFactor', cat:'quality', name:'Cover Factor (সিঙ্গেল জার্সি)',
+      formula:'CF = √Tex ÷ লুপ লেন্থ',
+      inputs:[
+        {id:'tex', label:'Tex', unit:'Tex', def:19.68},
+        {id:'ll', label:'লুপ লেন্থ', unit:'mm', def:3.0},
+      ],
+      calc:(v)=>({ value:Math.sqrt(v.tex)/v.ll, unit:'CF' }) },
+
+    { id:'tightnessTex', cat:'quality', name:'Tightness Factor K (Tex দিয়ে)',
+      formula:'K = √Tex ÷ লুপ লেন্থ',
+      inputs:[
+        {id:'tex', label:'Tex', unit:'Tex', def:19.68},
+        {id:'ll', label:'লুপ লেন্থ', unit:'mm', def:3.0},
+      ],
+      calc:(v)=>({ value:Math.sqrt(v.tex)/v.ll, unit:'K' }) },
+
+    { id:'tightnessNe', cat:'quality', name:'Tightness Factor K (Ne দিয়ে)',
+      formula:'K = √(590.5 ÷ Ne) ÷ লুপ লেন্থ',
+      inputs:[
+        {id:'ne', label:'Ne (ইয়ার্ন কাউন্ট)', unit:'Ne', def:30},
+        {id:'ll', label:'লুপ লেন্থ', unit:'mm', def:3.0},
+      ],
+      calc:(v)=>({ value:Math.sqrt(590.5/v.ne)/v.ll, unit:'K' }) },
+
+    { id:'shrinkage', cat:'quality', name:'Fabric Shrinkage (শ্রিংকেজ)',
+      formula:'শ্রিংকেজ % = ((Original − Final) ÷ Original) × 100',
+      inputs:[
+        {id:'o', label:'Original (ধোয়ার আগে)', unit:'একক', def:100},
+        {id:'f', label:'Final (ধোয়ার পরে)', unit:'একক', def:96},
+      ],
+      calc:(v)=>({ value:((v.o-v.f)/v.o)*100, unit:'%' }) },
+
+    { id:'spirality', cat:'quality', name:'Fabric Spirality (স্পাইরালিটি)',
+      formula:'স্পাইরালিটি % = (Shift ÷ ফেব্রিক উইডথ) × 100',
+      inputs:[
+        {id:'s', label:'Shift (কোণাকুণি সরণ)', unit:'cm', def:5},
+        {id:'w', label:'ফেব্রিক উইডথ', unit:'cm', def:160},
+      ],
+      calc:(v)=>({ value:(v.s/v.w)*100, unit:'%' }) },
+  ];
+
+  // ---------- Render ----------
+  const root = document.getElementById('categoriesRoot');
+  const fmt = (n)=> (n===null||n===undefined||isNaN(n)||!isFinite(n)) ? '—' :
+    n.toLocaleString('en-US', { maximumFractionDigits: 4 });
+
+  function buildPanel(formula){
+    const panel = document.createElement('div');
+    panel.className = 'panel';
+
+    const ft = document.createElement('div');
+    ft.className = 'formula-text';
+    ft.textContent = formula.formula;
+    panel.appendChild(ft);
+
+    formula.inputs.forEach(inp=>{
+      const row = document.createElement('div');
+      row.className = 'input-row';
+      row.innerHTML = `<label>${inp.label}${inp.unit ? `<span class="unit">${inp.unit}</span>`:''}</label>`;
+      const field = document.createElement('input');
+      field.type = 'number';
+      field.inputMode = 'decimal';
+      field.step = 'any';
+      field.value = inp.def;
+      field.dataset.key = inp.id;
+      row.appendChild(field);
+      panel.appendChild(row);
+    });
+
+    const resultBox = document.createElement('div');
+    resultBox.className = 'result-box';
+    resultBox.innerHTML = `<span class="rl">ফলাফল</span><span><span class="rv">—</span><span class="ru"></span></span>`;
+    panel.appendChild(resultBox);
+
+    if(formula.hint){
+      const hint = document.createElement('div');
+      hint.className = 'hint';
+      hint.textContent = formula.hint;
+      panel.appendChild(hint);
+    }
+
+    function recalc(){
+      const values = {};
+      let valid = true;
+      panel.querySelectorAll('input[data-key]').forEach(inp=>{
+        const val = parseFloat(inp.value);
+        if(isNaN(val)) valid = false;
+        values[inp.dataset.key] = val;
+      });
+      const rv = resultBox.querySelector('.rv');
+      const ru = resultBox.querySelector('.ru');
+      if(!valid){ rv.textContent = '—'; ru.textContent=''; return; }
+      try{
+        const out = formula.calc(values);
+        rv.textContent = fmt(out.value);
+        ru.textContent = out.unit ? ' ' + out.unit : '';
+      }catch(e){
+        rv.textContent = '—'; ru.textContent='';
+      }
+    }
+
+    panel.querySelectorAll('input[data-key]').forEach(inp=>{
+      inp.addEventListener('input', recalc);
+    });
+    recalc();
+
+    return panel;
+  }
+
+  function buildFormulaItem(formula){
+    const det = document.createElement('details');
+    det.className = 'formula-item';
+    det.dataset.name = formula.name.toLowerCase();
+    det.dataset.id = formula.id;
+
+    const summary = document.createElement('summary');
+    summary.innerHTML = `<span class="name">${formula.name}</span><span class="chev">▶</span>`;
+    det.appendChild(summary);
+
+    let built = false;
+    det.addEventListener('toggle', ()=>{
+      if(det.open && !built){
+        det.appendChild(buildPanel(formula));
+        built = true;
+      }
+    });
+
+    return det;
+  }
+
+  CATEGORIES.forEach(cat=>{
+    const items = FORMULAS.filter(f=>f.cat===cat.id);
+    if(items.length===0) return;
+
+    const catEl = document.createElement('div');
+    catEl.className = 'category';
+    catEl.dataset.cat = cat.id;
+
+    const head = document.createElement('div');
+    head.className = 'category-head';
+    head.innerHTML = `<div class="ico">${cat.icon}</div><h2>${cat.name}</h2><div class="rule"></div>`;
+    catEl.appendChild(head);
+
+    const list = document.createElement('div');
+    items.forEach(f=> list.appendChild(buildFormulaItem(f)));
+    catEl.appendChild(list);
+
+    root.appendChild(catEl);
+  });
+
+  // ---------- Search ----------
+  const searchBox = document.getElementById('searchBox');
+  const resultCount = document.getElementById('resultCount');
+  const emptyState = document.getElementById('emptyState');
+  const allItems = Array.from(document.querySelectorAll('details.formula-item'));
+  const allCats = Array.from(document.querySelectorAll('.category'));
+
+  function applyFilter(){
+    const q = searchBox.value.trim().toLowerCase();
+    let visibleCount = 0;
+    allItems.forEach(item=>{
+      const match = !q || item.dataset.name.includes(q);
+      item.classList.toggle('hidden', !match);
+      if(match) visibleCount++;
+    });
+    allCats.forEach(cat=>{
+      const visibleInCat = cat.querySelectorAll('details.formula-item:not(.hidden)').length;
+      cat.classList.toggle('hidden', visibleInCat===0);
+    });
+    emptyState.classList.toggle('show', visibleCount===0);
+    resultCount.textContent = q ? `${visibleCount} টি সূত্র পাওয়া গেছে` : `মোট ${allItems.length} টি সূত্র`;
+  }
+
+  searchBox.addEventListener('input', applyFilter);
+  applyFilter();
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+})();
+</script>
+</body>
+</html>
 
     { id:'tubeDiameter', cat:'machine', name:'Tube Diameter (টিউব ডায়ামিটার)',
       formula:'ডায়ামিটার = পরিধি ÷ π',
